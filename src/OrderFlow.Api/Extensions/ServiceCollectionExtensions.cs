@@ -1,15 +1,17 @@
-﻿using OrderFlow.Api.Domain.Orders;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderFlow.Api.Domain.Inventories;
+using OrderFlow.Api.Domain.Orders;
 using OrderFlow.Api.Persistence;
 
 namespace OrderFlow.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddDatabase(this IServiceCollection services)
+    public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
         {
-            //options.UseSqlServer("YourConnectionString");
+            options.UseNpgsql(configuration.GetConnectionString("Default"));
         });
     }
     

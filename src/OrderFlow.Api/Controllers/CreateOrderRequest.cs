@@ -2,4 +2,4 @@
 
 public record CreateOrderRequest(IReadOnlyCollection<OrderItemDto> Items);
 
-public sealed record OrderItemDto(int ProductId, int Quantity);
+public sealed record OrderItemDto(Guid ProductId, int Quantity);

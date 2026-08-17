@@ -3,6 +3,8 @@ using OrderFlow.Api.Domain.Orders;
 
 namespace OrderFlow.Api.Controllers;
 
+[ApiController]
+[Route("api/orders")]
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
@@ -13,7 +15,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
+    public async Task<ActionResult<Order>> Create(
         CreateOrderRequest request, 
         CancellationToken cancellationToken)
     {
@@ -23,11 +25,15 @@ public class OrdersController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> Get(
+    public async Task<ActionResult<Order>> Get(
         Guid id,
         CancellationToken cancellationToken)
     {
         var order = await _orderService.Get(id, cancellationToken);
+        if (order is null)
+        {
+            return NotFound();
+        }
 
         return Ok(order);
     }

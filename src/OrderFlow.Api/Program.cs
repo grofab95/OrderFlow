@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MassTransit;
 using OrderFlow.Api.ErrorHandling;
 using OrderFlow.Api.Extensions;
@@ -7,7 +8,13 @@ using OrderFlow.Api.Features.Payments.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();

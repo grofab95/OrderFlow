@@ -7,15 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.5.10" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.10" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Caching\" />
-      <Folder Include="Controllers\" />
-      <Folder Include="Domain\" />
       <Folder Include="Consumers\" />
-      <Folder Include="Persistence\" />
+      <Folder Include="Persistence\Configurations\" />
+      <Folder Include="Persistence\Migrations\" />
       <Folder Include="Services\" />
     </ItemGroup>
 

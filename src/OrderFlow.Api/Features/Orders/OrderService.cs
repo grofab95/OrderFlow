@@ -1,11 +1,10 @@
 ﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using OrderFlow.Api.Controllers;
-using OrderFlow.Api.Exceptions;
+using OrderFlow.Api.Features.Products;
 using OrderFlow.Api.Persistence;
 using OrderFlow.Contracts.Events;
 
-namespace OrderFlow.Api.Domain.Orders;
+namespace OrderFlow.Api.Features.Orders;
 
 public class OrderService : IOrderService
 {

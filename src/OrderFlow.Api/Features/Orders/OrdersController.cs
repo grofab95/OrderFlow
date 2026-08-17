@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrderFlow.Api.Domain.Orders;
 
-namespace OrderFlow.Api.Controllers;
+namespace OrderFlow.Api.Features.Orders;
 
 [ApiController]
 [Route("api/orders")]

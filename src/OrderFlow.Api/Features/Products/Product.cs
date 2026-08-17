@@ -1,4 +1,4 @@
-﻿namespace OrderFlow.Api.Domain.Products;
+﻿namespace OrderFlow.Api.Features.Products;
 
 public class Product
 {

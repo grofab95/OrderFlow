@@ -1,8 +1,7 @@
 ﻿using MassTransit;
-using OrderFlow.Api.Domain.Inventories;
 using OrderFlow.Contracts.Events;
 
-namespace OrderFlow.Api.Consumers;
+namespace OrderFlow.Api.Features.Inventory.Consumers;
 
 public class OrderCreatedConsumer(ILogger<OrderCreatedConsumer> logger, IInventoryService inventoryService) 
     : IConsumer<OrderCreated>

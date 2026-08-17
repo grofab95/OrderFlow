@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderFlow.Api.Domain.Orders;
-using OrderFlow.Api.Domain.Products;
+using OrderFlow.Api.Features.Orders;
+using OrderFlow.Api.Features.Products;
 
 namespace OrderFlow.Api.Persistence;
 

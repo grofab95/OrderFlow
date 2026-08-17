@@ -1,4 +1,4 @@
-namespace OrderFlow.Api.Exceptions;
+namespace OrderFlow.Api.Features.Orders;
 
 public class OrderNotFoundException(Guid orderId)
     : Exception($"Order not found: {orderId}.")

@@ -1,6 +1,4 @@
-﻿namespace OrderFlow.Api.Domain.Inventories;
-
-public record InventoryReservationItem(Guid ProductId, int Quantity);
+namespace OrderFlow.Api.Features.Inventory;
 
 public interface IInventoryService
 {

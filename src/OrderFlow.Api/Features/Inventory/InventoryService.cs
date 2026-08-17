@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderFlow.Api.Persistence;
 
-namespace OrderFlow.Api.Domain.Inventories;
+namespace OrderFlow.Api.Features.Inventory;
 
 public class InventoryService(AppDbContext dbContext) : IInventoryService
 {

@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using OrderFlow.Contracts.Events;
 
-namespace OrderFlow.Api.Consumers;
+namespace OrderFlow.Api.Features.Payments.Consumers;
 
 public class InventoryReservedConsumer(ILogger<InventoryReservedConsumer> logger) : IConsumer<InventoryReserved>
 {

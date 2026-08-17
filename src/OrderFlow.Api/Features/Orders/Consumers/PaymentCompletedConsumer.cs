@@ -1,8 +1,7 @@
 ﻿using MassTransit;
-using OrderFlow.Api.Domain.Orders;
 using OrderFlow.Contracts.Events;
 
-namespace OrderFlow.Api.Consumers;
+namespace OrderFlow.Api.Features.Orders.Consumers;
 
 public class PaymentCompletedConsumer(ILogger<PaymentCompletedConsumer> logger, IOrderService orderService)
     : IConsumer<PaymentCompleted>

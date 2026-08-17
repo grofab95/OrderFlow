@@ -1,4 +1,4 @@
-﻿namespace OrderFlow.Api.Domain.Orders;
+﻿namespace OrderFlow.Api.Features.Orders;
 
 public class OrderItem
 {

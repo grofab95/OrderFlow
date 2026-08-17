@@ -1,4 +1,4 @@
-﻿namespace OrderFlow.Api.Controllers;
+﻿namespace OrderFlow.Api.Features.Orders;
 
 public record CreateOrderRequest(IReadOnlyCollection<OrderItemDto> Items);
 

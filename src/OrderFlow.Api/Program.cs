@@ -1,7 +1,9 @@
 using MassTransit;
-using OrderFlow.Api;
-using OrderFlow.Api.Consumers;
+using OrderFlow.Api.ErrorHandling;
 using OrderFlow.Api.Extensions;
+using OrderFlow.Api.Features.Inventory.Consumers;
+using OrderFlow.Api.Features.Orders.Consumers;
+using OrderFlow.Api.Features.Payments.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 

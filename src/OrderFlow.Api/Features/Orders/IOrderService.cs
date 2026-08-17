@@ -1,6 +1,4 @@
-﻿using OrderFlow.Api.Controllers;
-
-namespace OrderFlow.Api.Domain.Orders;
+﻿namespace OrderFlow.Api.Features.Orders;
 
 public interface IOrderService
 {

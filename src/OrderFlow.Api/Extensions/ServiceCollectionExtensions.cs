@@ -19,4 +19,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IOrderService, OrderService>();
     }
+    
+    public static void AddInventoryService(this IServiceCollection services)
+    {
+        services.AddScoped<IInventoryService, InventoryService>();
+    }
 }

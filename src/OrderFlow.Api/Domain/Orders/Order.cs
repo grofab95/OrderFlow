@@ -7,29 +7,39 @@ public class Order
     public decimal TotalAmount { get; private set; }
 
     public IReadOnlyCollection<OrderItem> Items => _items;
+    public DateTimeOffset CreatedAt { get; private set; }
+
     private readonly List<OrderItem> _items = [];
 
-    protected Order()
+    private Order()
     {
-        
     }
-    
-    public Order(OrderItem[] items)
+
+    public Order(IEnumerable<OrderItem> items)
     {
+        var orderItems = items.ToArray();
+
+        if (orderItems.Length == 0)
+        {
+            throw new ArgumentException("Order must contain at least one item.");
+        }
+
         Id = Guid.NewGuid();
-        _items.AddRange(items); 
-        Status = OrderStatus.Processing;
-    }
-        
-    public void AddItem(OrderItem item)
-    {
-        _items.Add(item);
+        Status = OrderStatus.Pending;
+        CreatedAt = DateTimeOffset.UtcNow;
 
-        UpdateTotalAmount();
+        _items.AddRange(orderItems);
+
+        TotalAmount = orderItems.Sum(x => x.UnitPrice * x.Quantity);
     }
 
-    public void UpdateTotalAmount()
+    public void Confirm()
     {
-        TotalAmount = _items.Sum(item => item.UnitPrice * item.Quantity);
+        Status = OrderStatus.Confirmed;
+    }
+
+    public void Cancel()
+    {
+        Status = OrderStatus.Cancelled;
     }
 }

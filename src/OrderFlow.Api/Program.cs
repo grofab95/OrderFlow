@@ -17,12 +17,19 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        cfg.Host("localhost", 5672, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
+
+        cfg.ConfigureEndpoints(context);
+        cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(2)));
     });
+    
+    x.AddConsumer<OrderCreatedConsumer>();
+    x.AddConsumer<InventoryReservedConsumer>();
+    x.AddConsumer<PaymentCompletedConsumer>();
 });
 
 var app = builder.Build();

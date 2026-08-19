@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using MassTransit;
+using Microsoft.Extensions.Options;
+using OrderFlow.Api.Configuration;
 using OrderFlow.Api.ErrorHandling;
 using OrderFlow.Api.Extensions;
 using OrderFlow.Api.Features.Inventory.Consumers;
@@ -24,6 +26,12 @@ builder.Services.AddOrderService();
 builder.Services.AddInventoryService();
 builder.Services.AddRedis(builder.Configuration);
 
+builder.Services
+    .AddOptions<RabbitMqOptions>()
+    .Bind(builder.Configuration.GetSection(RabbitMqOptions.SectionKey))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<OrderCreatedConsumer>();
@@ -47,10 +55,14 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", 5672, "/", host =>
+        var options = context
+            .GetRequiredService<IOptions<RabbitMqOptions>>()
+            .Value;
+        
+        cfg.Host(options.Host, (ushort)options.Port, "/", h =>
         {
-            host.Username("guest");
-            host.Password("guest");
+            h.Username(options.Username);
+            h.Password(options.Password);
         });
 
         cfg.ConfigureEndpoints(context);

@@ -9,6 +9,8 @@ public class Product
     public int Quantity { get; private set; }
     
     public decimal Price { get; private set; }
+    
+    public uint Version { get; private set; }
 
     private Product()
     {

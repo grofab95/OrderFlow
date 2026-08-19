@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using OrderFlow.Api.Features.Inventory;
 using OrderFlow.Api.Features.Orders;
 using OrderFlow.Api.Features.Products;
 
@@ -10,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<InventoryReservation> InventoryReservations => Set<InventoryReservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -26,6 +26,9 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasPrecision(18, 2)
             .IsRequired();
         
+        builder.Property(x => x.Version)
+            .IsRowVersion();
+        
         builder.HasData(
             new
             {

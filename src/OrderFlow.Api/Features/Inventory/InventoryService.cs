@@ -5,7 +5,7 @@ namespace OrderFlow.Api.Features.Inventory;
 
 public class InventoryService(AppDbContext dbContext) : IInventoryService
 {
-    public async Task<bool> TryReserveAsync(
+    public async Task<bool> TryReserve(
         Guid orderId,
         IReadOnlyCollection<InventoryReservationItem> items,
         CancellationToken cancellationToken)
@@ -13,6 +13,12 @@ public class InventoryService(AppDbContext dbContext) : IInventoryService
         if (items.Count == 0)
         {
             return false;
+        }
+        
+        if (await dbContext.InventoryReservations
+                .AnyAsync(x => x.OrderId == orderId, cancellationToken))
+        {
+            return true;
         }
 
         var requestedQuantities = items
@@ -53,7 +59,10 @@ public class InventoryService(AppDbContext dbContext) : IInventoryService
 
             product.Reserve(request.Value);
         }
+        
+        var inventoryReservation = new InventoryReservation(orderId);
 
+        await dbContext.InventoryReservations.AddAsync(inventoryReservation, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return true;

@@ -16,7 +16,7 @@ public class OrderCreatedConsumer(ILogger<OrderCreatedConsumer> logger, IInvento
                 x.Quantity))
             .ToArray();
 
-        var reserved = await inventoryService.TryReserveAsync(
+        var reserved = await inventoryService.TryReserve(
             context.Message.OrderId,
             items,
             context.CancellationToken);

@@ -81,8 +81,7 @@ public class OrderService : IOrderService
         Guid id,
         CancellationToken cancellationToken)
     {
-        var cacheKey = $"orders:v1:{id:N}";
-
+        var cacheKey = OrderCacheKeys.ById(id);
         var cachedJson = await _cache.GetStringAsync(
             cacheKey,
             cancellationToken);
@@ -142,5 +141,20 @@ public class OrderService : IOrderService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await _cache.RemoveAsync(OrderCacheKeys.ById(order.Id), cancellationToken);
+    }
+
+    public async Task Cancel(Guid orderId, CancellationToken cancellationToken)
+    {
+        var order = await _dbContext.Orders
+            .SingleOrDefaultAsync(x => x.Id == orderId, cancellationToken);
+
+        if (order is null)
+        {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        order.Cancel();
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

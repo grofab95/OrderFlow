@@ -35,11 +35,27 @@ public class Order
 
     public void Confirm()
     {
+        if (Status == OrderStatus.Confirmed)
+        {
+            return;
+        }
+        
         Status = OrderStatus.Confirmed;
     }
 
     public void Cancel()
     {
+        if (Status == OrderStatus.Cancelled)
+        {
+            return;
+        }
+
+        if (Status != OrderStatus.Pending)
+        {
+            throw new InvalidOperationException(
+                $"Cannot cancel order with status {Status}.");
+        }
+
         Status = OrderStatus.Cancelled;
     }
 }

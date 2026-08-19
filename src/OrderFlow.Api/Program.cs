@@ -39,6 +39,7 @@ builder.Services.AddMassTransit(x =>
     
     x.AddConsumer<OrderCreatedConsumer>();
     x.AddConsumer<InventoryReservedConsumer>();
+    x.AddConsumer<InventoryReservationFailedConsumer>();
     x.AddConsumer<PaymentCompletedConsumer>();
 });
 

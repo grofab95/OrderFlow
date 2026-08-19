@@ -17,7 +17,9 @@ public class OrderService : IOrderService
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IDistributedCache _cache;
 
-    public OrderService(AppDbContext dbContext, IPublishEndpoint publishEndpoint, IDistributedCache cache)
+    public OrderService(AppDbContext dbContext, 
+        IPublishEndpoint publishEndpoint,
+        IDistributedCache cache)
     {
         _dbContext = dbContext;
         _publishEndpoint = publishEndpoint;
@@ -59,9 +61,7 @@ public class OrderService : IOrderService
         var order = new Order(orderItems);
 
         _dbContext.Orders.Add(order);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
+        
         await _publishEndpoint.Publish(
             new OrderCreated(
                 order.Id,
@@ -74,6 +74,8 @@ public class OrderService : IOrderService
                     .ToArray()),
             cancellationToken);
 
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        
         return order;
     }
 

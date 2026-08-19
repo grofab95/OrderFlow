@@ -5,6 +5,7 @@ using OrderFlow.Api.Extensions;
 using OrderFlow.Api.Features.Inventory.Consumers;
 using OrderFlow.Api.Features.Orders.Consumers;
 using OrderFlow.Api.Features.Payments.Consumers;
+using OrderFlow.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,22 +26,35 @@ builder.Services.AddRedis(builder.Configuration);
 
 builder.Services.AddMassTransit(x =>
 {
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host("localhost", 5672, "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-
-        cfg.ConfigureEndpoints(context);
-        cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(2)));
-    });
-    
     x.AddConsumer<OrderCreatedConsumer>();
     x.AddConsumer<InventoryReservedConsumer>();
     x.AddConsumer<InventoryReservationFailedConsumer>();
     x.AddConsumer<PaymentCompletedConsumer>();
+
+    x.AddEntityFrameworkOutbox<AppDbContext>(outbox =>
+    {
+        outbox.UsePostgres();
+        outbox.UseBusOutbox();
+    });
+
+    x.AddConfigureEndpointsCallback((context, _, endpoint) =>
+    {
+        endpoint.UseMessageRetry(retry =>
+            retry.Interval(3, TimeSpan.FromSeconds(2)));
+        
+        endpoint.UseEntityFrameworkOutbox<AppDbContext>(context);
+    });
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", 5672, "/", host =>
+        {
+            host.Username("guest");
+            host.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
 });
 
 var app = builder.Build();

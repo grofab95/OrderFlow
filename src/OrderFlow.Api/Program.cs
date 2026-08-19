@@ -21,6 +21,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddOrderService();
 builder.Services.AddInventoryService();
+builder.Services.AddRedis(builder.Configuration);
 
 builder.Services.AddMassTransit(x =>
 {

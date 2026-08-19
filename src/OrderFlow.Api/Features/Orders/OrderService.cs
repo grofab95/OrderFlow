@@ -1,5 +1,8 @@
-﻿using MassTransit;
+﻿using System.Text.Json;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using OrderFlow.Api.Caching;
 using OrderFlow.Api.Features.Products;
 using OrderFlow.Api.Persistence;
 using OrderFlow.Contracts.Events;
@@ -8,13 +11,17 @@ namespace OrderFlow.Api.Features.Orders;
 
 public class OrderService : IOrderService
 {
+    private static readonly JsonSerializerOptions CacheJsonOptions = new(JsonSerializerDefaults.Web);
+    
     private readonly AppDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IDistributedCache _cache;
 
-    public OrderService(AppDbContext dbContext, IPublishEndpoint publishEndpoint)
+    public OrderService(AppDbContext dbContext, IPublishEndpoint publishEndpoint, IDistributedCache cache)
     {
         _dbContext = dbContext;
         _publishEndpoint = publishEndpoint;
+        _cache = cache;
     }
     
     public async Task<Order> Create(CreateOrderRequest request, CancellationToken cancellationToken)
@@ -70,12 +77,57 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public Task<Order?> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<OrderResponse?> Get(
+        Guid id,
+        CancellationToken cancellationToken)
     {
-        return _dbContext.Orders
+        var cacheKey = $"orders:v1:{id:N}";
+
+        var cachedJson = await _cache.GetStringAsync(
+            cacheKey,
+            cancellationToken);
+
+        if (cachedJson is not null)
+        {
+            return JsonSerializer.Deserialize<OrderResponse>(
+                cachedJson,
+                CacheJsonOptions);
+        }
+
+        var order = await _dbContext.Orders
             .AsNoTracking()
             .Include(x => x.Items)
-            .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .SingleOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+
+        if (order is null)
+        {
+            return null;
+        }
+
+        var response = new OrderResponse(
+            order.Id,
+            order.Status,
+            order.TotalAmount,
+            order.CreatedAt,
+            order.Items
+                .Select(x => new OrderItemResponse(
+                    x.ProductId,
+                    x.Quantity,
+                    x.UnitPrice))
+                .ToArray());
+
+        await _cache.SetStringAsync(
+            cacheKey,
+            JsonSerializer.Serialize(response, CacheJsonOptions),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            },
+            cancellationToken);
+
+        return response;
     }
 
     public async Task Confirm(Guid orderId, CancellationToken cancellationToken)
@@ -89,5 +141,6 @@ public class OrderService : IOrderService
         order.Confirm();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _cache.RemoveAsync(OrderCacheKeys.ById(order.Id), cancellationToken);
     }
 }

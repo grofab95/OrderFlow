@@ -39,6 +39,11 @@ public class Order
         {
             return;
         }
+
+        if (Status == OrderStatus.Cancelled)
+        {
+            throw new InvalidOperationException("Cannot confirm a cancelled order.");
+        }
         
         Status = OrderStatus.Confirmed;
     }

@@ -9,7 +9,7 @@ public class InventoryReservedConsumer(ILogger<InventoryReservedConsumer> logger
     {
         logger.LogInformation("Inventory reserved");
         
-        await Task.Delay(TimeSpan.FromSeconds(15));
+        await Task.Delay(TimeSpan.FromSeconds(15), context.CancellationToken);
         
         await context.Publish(new PaymentCompleted(context.Message.OrderId));
     }

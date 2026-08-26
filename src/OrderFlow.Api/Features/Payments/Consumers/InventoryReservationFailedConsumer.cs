@@ -10,6 +10,8 @@ public class InventoryReservationFailedConsumer(
 {
     public async Task Consume(ConsumeContext<InventoryReservationFailed> context)
     {
+        logger.LogInformation("Inventory reservation failed");
+        
         var order = await orderService.Get(context.Message.OrderId, context.CancellationToken);
         if (order is null)
         {

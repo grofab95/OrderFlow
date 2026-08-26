@@ -26,7 +26,7 @@ public class OrderService : IOrderService
         _cache = cache;
     }
     
-    public async Task<Order> Create(CreateOrderRequest request, CancellationToken cancellationToken)
+    public async Task<OrderResponse> Create(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         var productIds = request.Items
             .Select(x => x.ProductId)
@@ -76,7 +76,17 @@ public class OrderService : IOrderService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         
-        return order;
+        return new OrderResponse(
+            order.Id,
+            order.Status,
+            order.TotalAmount,
+            order.CreatedAt,
+            order.Items
+                .Select(x => new OrderItemResponse(
+                    x.ProductId,
+                    x.Quantity,
+                    x.UnitPrice))
+                .ToArray());;
     }
 
     public async Task<OrderResponse?> Get(
@@ -158,5 +168,6 @@ public class OrderService : IOrderService
         order.Cancel();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _cache.RemoveAsync(OrderCacheKeys.ById(order.Id), cancellationToken);
     }
 }

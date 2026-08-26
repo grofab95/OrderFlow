@@ -14,7 +14,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Order>> Create(
+    public async Task<ActionResult<OrderResponse>> Create(
         CreateOrderRequest request, 
         CancellationToken cancellationToken)
     {
@@ -24,7 +24,7 @@ public class OrdersController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Order>> Get(
+    public async Task<ActionResult<OrderResponse>> Get(
         Guid id,
         CancellationToken cancellationToken)
     {

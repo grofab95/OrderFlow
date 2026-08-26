@@ -27,7 +27,7 @@ public class OrderCreatedConsumer(ILogger<OrderCreatedConsumer> logger, IInvento
         }
         else
         {
-            await context.Publish(new InventoryReservationFailed(context.Message.OrderId, ""));
+            await context.Publish(new InventoryReservationFailed(context.Message.OrderId, "Failed to reserve"));
         }
     }
 }

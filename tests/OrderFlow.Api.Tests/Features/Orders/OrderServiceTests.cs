@@ -1,6 +1,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using OrderFlow.Api.Caching;
 using OrderFlow.Api.Features.Orders;
@@ -63,7 +64,8 @@ public class OrderServiceTests
         return new OrderService(
             dbContext,
             Substitute.For<IPublishEndpoint>(),
-            cache);
+            cache,
+            NullLogger<OrderService>.Instance);
     }
 
     private static AppDbContext CreateDbContext()

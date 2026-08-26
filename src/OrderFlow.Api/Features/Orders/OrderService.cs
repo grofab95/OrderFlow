@@ -16,14 +16,17 @@ public class OrderService : IOrderService
     private readonly AppDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IDistributedCache _cache;
+    private readonly ILogger<OrderService> _logger;
 
-    public OrderService(AppDbContext dbContext, 
+    public OrderService(AppDbContext dbContext,
         IPublishEndpoint publishEndpoint,
-        IDistributedCache cache)
+        IDistributedCache cache,
+        ILogger<OrderService> logger)
     {
         _dbContext = dbContext;
         _publishEndpoint = publishEndpoint;
         _cache = cache;
+        _logger = logger;
     }
     
     public async Task<OrderResponse> Create(CreateOrderRequest request, CancellationToken cancellationToken)
@@ -75,7 +78,14 @@ public class OrderService : IOrderService
             cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-        
+
+        _logger.LogInformation(
+            "Order {OrderId} was created with {ItemCount} item(s), total {TotalAmount} and status {OrderStatus}",
+            order.Id,
+            order.Items.Count,
+            order.TotalAmount,
+            order.Status);
+
         return new OrderResponse(
             order.Id,
             order.Status,
@@ -100,10 +110,14 @@ public class OrderService : IOrderService
 
         if (cachedJson is not null)
         {
+            _logger.LogDebug("Cache hit for order {OrderId}", id);
+
             return JsonSerializer.Deserialize<OrderResponse>(
                 cachedJson,
                 CacheJsonOptions);
         }
+
+        _logger.LogDebug("Cache miss for order {OrderId}", id);
 
         var order = await _dbContext.Orders
             .AsNoTracking()
@@ -152,7 +166,14 @@ public class OrderService : IOrderService
         order.Confirm();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation(
+            "Order {OrderId} was confirmed",
+            order.Id);
+
         await _cache.RemoveAsync(OrderCacheKeys.ById(order.Id), cancellationToken);
+
+        _logger.LogDebug("Cache entry for order {OrderId} was invalidated", order.Id);
     }
 
     public async Task Cancel(Guid orderId, CancellationToken cancellationToken)
@@ -168,6 +189,13 @@ public class OrderService : IOrderService
         order.Cancel();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation(
+            "Order {OrderId} was cancelled",
+            order.Id);
+
         await _cache.RemoveAsync(OrderCacheKeys.ById(order.Id), cancellationToken);
+
+        _logger.LogDebug("Cache entry for order {OrderId} was invalidated", order.Id);
     }
 }

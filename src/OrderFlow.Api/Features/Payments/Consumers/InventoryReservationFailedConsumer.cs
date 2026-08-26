@@ -10,16 +10,32 @@ public class InventoryReservationFailedConsumer(
 {
     public async Task Consume(ConsumeContext<InventoryReservationFailed> context)
     {
-        logger.LogInformation("Inventory reservation failed");
-        
-        var order = await orderService.Get(context.Message.OrderId, context.CancellationToken);
+        var orderId = context.Message.OrderId;
+
+        logger.LogWarning(
+            "Handling InventoryReservationFailed for order {OrderId}. Reason: {Reason}. MessageId: {MessageId}, CorrelationId: {CorrelationId}",
+            orderId,
+            context.Message.Reason,
+            context.MessageId,
+            context.CorrelationId);
+
+        var order = await orderService.Get(orderId, context.CancellationToken);
         if (order is null)
         {
-            throw new InvalidOperationException($"Order with id {context.Message.OrderId} not found");
+            logger.LogError(
+                "Order {OrderId} was not found while handling InventoryReservationFailed",
+                orderId);
+
+            throw new InvalidOperationException($"Order with id {orderId} not found");
         }
-        
+
+        logger.LogDebug(
+            "Cancelling order {OrderId} with status {OrderStatus}",
+            orderId,
+            order.Status);
+
         await orderService.Cancel(
-            context.Message.OrderId,
+            orderId,
             context.CancellationToken);
     }
 }

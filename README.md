@@ -20,18 +20,34 @@ Order reads use Redis with the cache-aside pattern. Inventory reservations are i
 - xUnit / NSubstitute
 - Docker Compose
 
-## Running locally
+## Running with Docker
+
+Requirements: Docker.
+
+```bash
+docker compose up --build
+```
+
+This starts PostgreSQL, Redis, RabbitMQ and the API. The API waits for the
+dependencies to become healthy and applies EF Core migrations on startup.
+
+- Swagger: [http://localhost:5173/swagger](http://localhost:5173/swagger)
+- Liveness: [http://localhost:5173/health/live](http://localhost:5173/health/live)
+- Readiness: [http://localhost:5173/health/ready](http://localhost:5173/health/ready)
+- RabbitMQ Management: [http://localhost:15672](http://localhost:15672) (`guest` / `guest`)
+
+Database data lives in the named `postgres_data` volume and survives
+`docker compose down`. Use `docker compose down -v` to remove that volume and
+drop the database.
+
+## Running from the SDK
 
 Requirements: .NET 10 SDK and Docker.
 
 ```bash
-docker compose up -d
-dotnet ef database update --project src/OrderFlow.Api
+docker compose up -d postgres redis rabbitmq
 dotnet run --project src/OrderFlow.Api --launch-profile http
 ```
-
-Swagger: [http://localhost:5173/swagger](http://localhost:5173/swagger)  
-RabbitMQ Management: [http://localhost:15672](http://localhost:15672) (`guest` / `guest`)
 
 Example request:
 

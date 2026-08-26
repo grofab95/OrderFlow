@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NLog.Web;
 using OrderFlow.Api.Configuration;
@@ -82,6 +83,13 @@ builder.Services.AddMassTransit(x =>
 });
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await dbContext.Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {

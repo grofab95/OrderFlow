@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Api", "src\OrderF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Contracts", "src\OrderFlow.Contracts\OrderFlow.Contracts.csproj", "{7561E7FF-9E6D-4D75-87D2-DA74BE647AE6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BC06A487-38D4-49F6-90A3-5F816851687A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderFlow.Api.Tests", "tests\OrderFlow.Api.Tests\OrderFlow.Api.Tests.csproj", "{E7042AE6-1F3B-495C-842C-704DF9A83864}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +24,14 @@ Global
 		{7561E7FF-9E6D-4D75-87D2-DA74BE647AE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7561E7FF-9E6D-4D75-87D2-DA74BE647AE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7561E7FF-9E6D-4D75-87D2-DA74BE647AE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7042AE6-1F3B-495C-842C-704DF9A83864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7042AE6-1F3B-495C-842C-704DF9A83864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7042AE6-1F3B-495C-842C-704DF9A83864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7042AE6-1F3B-495C-842C-704DF9A83864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D4F983E0-4E6C-488E-A023-853886869D1F} = {8A9B3B03-DC40-40D2-AA76-D1214A739F2C}
 		{7561E7FF-9E6D-4D75-87D2-DA74BE647AE6} = {8A9B3B03-DC40-40D2-AA76-D1214A739F2C}
+		{E7042AE6-1F3B-495C-842C-704DF9A83864} = {BC06A487-38D4-49F6-90A3-5F816851687A}
 	EndGlobalSection
 EndGlobal

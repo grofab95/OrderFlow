@@ -1,0 +1,39 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE / editor
+.idea
+.vs
+.vscode
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Build output
+**/bin
+**/obj
+**/out
+**/publish
+**/artifacts
+**/*.nupkg
+
+# Test results
+**/TestResults
+**/[Tt]est[Rr]esult*
+**/*.trx
+**/*.coverage
+**/coverage.*
+
+# Docker / docs
+.dockerignore
+docker-compose*.yml
+README.md
+LICENSE
+
+# Misc local artifacts
+**/*.log
+**/.DS_Store

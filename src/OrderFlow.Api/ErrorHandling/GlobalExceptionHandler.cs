@@ -10,7 +10,10 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Unhandled exception occurred.");
+        logger.LogError(
+            exception,
+            "Unhandled exception occurred while handling request {TraceIdentifier}",
+            httpContext.TraceIdentifier);
 
         var problem = new ProblemDetails
         {

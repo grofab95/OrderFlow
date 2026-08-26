@@ -8,8 +8,14 @@ public class PaymentCompletedConsumer(ILogger<PaymentCompletedConsumer> logger, 
 {
     public async Task Consume(ConsumeContext<PaymentCompleted> context)
     {
-        logger.LogInformation("Payment completed");
-        
-        await orderService.Confirm(context.Message.OrderId, context.CancellationToken);
+        var orderId = context.Message.OrderId;
+
+        logger.LogInformation(
+            "Handling PaymentCompleted for order {OrderId}. MessageId: {MessageId}, CorrelationId: {CorrelationId}",
+            orderId,
+            context.MessageId,
+            context.CorrelationId);
+
+        await orderService.Confirm(orderId, context.CancellationToken);
     }
 }

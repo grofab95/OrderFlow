@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging.Abstractions;
 using OrderFlow.Api.Features.Inventory;
 using OrderFlow.Api.Features.Products;
 using OrderFlow.Api.Persistence;
@@ -31,14 +32,14 @@ public class InventoryServiceTests
         bool firstReservationResult;
         await using (var firstDbContext = CreateDbContext(databaseName, databaseRoot))
         {
-            var service = new InventoryService(firstDbContext);
+            var service = new InventoryService(firstDbContext, NullLogger<InventoryService>.Instance);
             firstReservationResult = await service.TryReserve(orderId, items, CancellationToken.None);
         }
 
         bool secondReservationResult;
         await using (var secondDbContext = CreateDbContext(databaseName, databaseRoot))
         {
-            var service = new InventoryService(secondDbContext);
+            var service = new InventoryService(secondDbContext, NullLogger<InventoryService>.Instance);
             secondReservationResult = await service.TryReserve(orderId, items, CancellationToken.None);
         }
 
@@ -64,7 +65,7 @@ public class InventoryServiceTests
         var product = new Product("Test product", 2);
         dbContext.Products.Add(product);
         await dbContext.SaveChangesAsync();
-        var service = new InventoryService(dbContext);
+        var service = new InventoryService(dbContext, NullLogger<InventoryService>.Instance);
 
         // Act
         var result = await service.TryReserve(

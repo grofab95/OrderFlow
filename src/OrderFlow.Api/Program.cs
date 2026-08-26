@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using NLog.Web;
 using OrderFlow.Api.Configuration;
 using OrderFlow.Api.ErrorHandling;
 using OrderFlow.Api.Extensions;
@@ -11,6 +12,9 @@ using OrderFlow.Api.HealthChecks;
 using OrderFlow.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 builder.Services
     .AddControllers()

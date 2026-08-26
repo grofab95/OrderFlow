@@ -7,10 +7,18 @@ public class InventoryReservedConsumer(ILogger<InventoryReservedConsumer> logger
 {
     public async Task Consume(ConsumeContext<InventoryReserved> context)
     {
-        logger.LogInformation("Inventory reserved");
-        
+        var orderId = context.Message.OrderId;
+
+        logger.LogInformation(
+            "Handling InventoryReserved for order {OrderId}. MessageId: {MessageId}, CorrelationId: {CorrelationId}",
+            orderId,
+            context.MessageId,
+            context.CorrelationId);
+
         await Task.Delay(TimeSpan.FromSeconds(15), context.CancellationToken);
-        
-        await context.Publish(new PaymentCompleted(context.Message.OrderId));
+
+        await context.Publish(new PaymentCompleted(orderId));
+
+        logger.LogDebug("Published PaymentCompleted for order {OrderId}", orderId);
     }
 }

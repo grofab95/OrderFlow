@@ -7,6 +7,7 @@ using OrderFlow.Api.Extensions;
 using OrderFlow.Api.Features.Inventory.Consumers;
 using OrderFlow.Api.Features.Orders.Consumers;
 using OrderFlow.Api.Features.Payments.Consumers;
+using OrderFlow.Api.HealthChecks;
 using OrderFlow.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,7 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddOrderService();
 builder.Services.AddInventoryService();
 builder.Services.AddRedis(builder.Configuration);
+builder.Services.AddApplicationHealthChecks();
 
 builder.Services
     .AddOptions<RabbitMqOptions>()
@@ -38,6 +40,12 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<InventoryReservedConsumer>();
     x.AddConsumer<InventoryReservationFailedConsumer>();
     x.AddConsumer<PaymentCompletedConsumer>();
+
+    x.ConfigureHealthCheckOptions(options =>
+    {
+        options.Name = HealthCheckNames.MassTransit;
+        options.Tags.Add(HealthCheckTags.Ready);
+    });
 
     x.AddEntityFrameworkOutbox<AppDbContext>(outbox =>
     {
@@ -83,5 +91,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapHealthCheckEndpoints();
 app.UseExceptionHandler();
 app.Run();
